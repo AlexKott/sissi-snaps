@@ -9,14 +9,14 @@ import express from 'express';
 import path from 'path';
 
 export default class Server {
-  constructor(buildDir = 'build') {
-    this.PORT = 3231;
+  constructor(buildDir = 'build', { port = 3231 }) {
     const buildPath = path.join(process.cwd(), buildDir);
     const app = express();
 
     app.use(express.static(buildPath));
     app.get('*', (req, res) => res.sendFile(path.join(buildPath, '_tmp.html')));
 
+    this.port = port;
     this.app = app;
   }
 
@@ -25,8 +25,8 @@ export default class Server {
   }
 
   start() {
-    this.instance = this.app.listen(this.PORT, () => {
-      console.log('Server is listening...');
+    this.instance = this.app.listen(this.port, () => {
+      console.log(`Server is listening on port ${this.port}... `);
     });
   }
 

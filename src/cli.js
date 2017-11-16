@@ -15,9 +15,12 @@ CLI
   10. Stop Sever
   11. remove _tmp.html
 */
+import gatherOptions from './options';
 import Server from './Server';
 
 export default (() => {
-  const server = new Server();
+  const options = gatherOptions();
+
+  const server = new Server(options.buildDir, options.snaps.server);
   server.start();
 })();

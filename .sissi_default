@@ -1,0 +1,8 @@
+{
+  "buildDir": "build",
+  "snaps": {
+    "server": {
+      "port": 3231
+    }
+  }
+}
