@@ -11,7 +11,7 @@
   },
   "scripts": {
     "build": "babel --out-dir lib src",
-    "build:watch": "yarn build -- --watch",
+    "build:watch": "yarn build --watch",
     "prepublish": "rm -rf lib/* && yarn build"
   },
   "dependencies": {

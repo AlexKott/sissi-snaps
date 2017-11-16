@@ -2,7 +2,7 @@
   "buildDir": "build",
   "snaps": {
     "crawler": {
-      "delay": 50
+      "snapshotDelay": 50
     },
     "server": {
       "port": 3231
