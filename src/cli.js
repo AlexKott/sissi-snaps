@@ -1,10 +1,5 @@
 /*
 CLI
-  1. setup source and build directory
-  2. setup snapshot delay (50ms)
-
-  if (!fs.existsSync(buildDir)) throw new Error(`No build directory exists at: ${buildDirPath}`);
-
   3. create Writer
   4. rename index.html -> _tmp.html
   5. create Server
@@ -15,12 +10,19 @@ CLI
   10. Stop Sever
   11. remove _tmp.html
 */
+import path from 'path';
+
 import gatherOptions from './options';
 import Server from './Server';
+import Writer from './Writer';
 
 export default (() => {
   const options = gatherOptions();
+  const basePath = path.join(process.cwd(), options.buildDir);
+  const server = new Server(basePath, options.snaps.server);
+  const writer = new Writer(basePath, options.snaps.writer);
 
-  const server = new Server(options.buildDir, options.snaps.server);
+  writer.rename('index.html', '_tmp.html');
+
   server.start();
 })();

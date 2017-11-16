@@ -1,8 +1,14 @@
 {
   "buildDir": "build",
   "snaps": {
+    "crawler": {
+      "delay": 50
+    },
     "server": {
       "port": 3231
+    },
+    "writer": {
+      "onlyIndex": true
     }
   }
 }

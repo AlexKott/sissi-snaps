@@ -1,5 +1,5 @@
 /***
-  The server is opening all static files in the buildPath (especially
+  The server is opening all static files in the basePath (especially
   important for the *.js files).
   For all accessed routes it returns the temporary (webpack) html file, so
   that the frontend router can take over.
@@ -9,12 +9,11 @@ import express from 'express';
 import path from 'path';
 
 export default class Server {
-  constructor(buildDir = 'build', { port = 3231 }) {
-    const buildPath = path.join(process.cwd(), buildDir);
+  constructor(basePath, { port = 3231 }) {
     const app = express();
 
-    app.use(express.static(buildPath));
-    app.get('*', (req, res) => res.sendFile(path.join(buildPath, '_tmp.html')));
+    app.use(express.static(basePath));
+    app.get('*', (req, res) => res.sendFile(path.join(basePath, '_tmp.html')));
 
     this.port = port;
     this.app = app;
