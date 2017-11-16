@@ -19,13 +19,14 @@ export default class Server {
     this.app = app;
   }
 
-  getPort() {
-    return this.instance.address().port;
-  }
-
   start() {
-    this.instance = this.app.listen(this.port, () => {
-      console.log(`Server is listening on port ${this.port}... `);
+    return new Promise((resolve, reject) => {
+      this.instance = this.app.listen(this.port, (err) => {
+        if (err) reject(err);
+
+        console.log(`Webserver is listening on port ${this.port}... `);
+        resolve();
+      });
     });
   }
 

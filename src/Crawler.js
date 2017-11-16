@@ -12,3 +12,9 @@ CRAWLER
   7. jsdom serialize document
   8. send html and path information to provided callback
 */
+
+export default class Crawler {
+  constructor(basePath) {
+    this.basePath = basePath;
+  }
+}

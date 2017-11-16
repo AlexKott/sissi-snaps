@@ -1,9 +1,5 @@
 /*
 CLI
-  3. create Writer
-  4. rename index.html -> _tmp.html
-  5. create Server
-  6. create Crawler
   7. Crawler crawl
   8. Take result html and path
   9. Writer write to file
@@ -12,17 +8,19 @@ CLI
 */
 import path from 'path';
 
+import Crawler from './Crawler';
 import gatherOptions from './options';
 import Server from './Server';
 import Writer from './Writer';
 
-export default (() => {
+export default (async () => {
   const options = gatherOptions();
   const basePath = path.join(process.cwd(), options.buildDir);
+  const crawler = new Crawler(basePath, options.snaps.crawler);
   const server = new Server(basePath, options.snaps.server);
   const writer = new Writer(basePath, options.snaps.writer);
 
   writer.rename('index.html', '_tmp.html');
 
-  server.start();
+  await server.start();
 })();
