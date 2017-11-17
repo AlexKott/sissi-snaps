@@ -12,7 +12,7 @@ import url from 'url';
 const { JSDOM } = jsdom;
 
 export default class Crawler {
-  constructor(baseUrl, { snapshotDelay = 0 }) {
+  constructor(baseUrl, snapshotDelay = 0) {
     this.baseUrl = baseUrl;
     this.paths = [];
     this.paths.push('');
@@ -32,12 +32,17 @@ export default class Crawler {
   }
 
   async takeSnapshot(urlPath) {
-    let dom;
+    if (urlPath === undefined) {
+      console.log('stopping');
+      return Promise.resolve();
+    }
+
     const pathName = url.resolve('', urlPath);
     const snapUrl = this.baseUrl + pathName;
+    let dom;
 
     if (this.processedPaths[pathName]) {
-      return takeSnapshot(this.paths.shift());
+      return this.takeSnapshot(this.paths.shift());
     }
     this.processedPaths[pathName] = true;
 
@@ -49,7 +54,16 @@ export default class Crawler {
     } catch(error) {
       console.log(error);
     } finally {
-      setTimeout(() => this.callback(dom), this.snapshotDelay);
+      setTimeout(() => {
+        this.callback(urlPath, dom);
+        this.extractLinks(dom);
+        this.takeSnapshot(this.paths.shift());
+      }, this.snapshotDelay);
     }
+  }
+
+  extractLinks(dom) {
+    const anchors = dom.window.document.querySelectorAll('a');
+    // TODO: filter anchors after data-link-type='internal'
   }
 }

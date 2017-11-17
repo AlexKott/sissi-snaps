@@ -10,7 +10,7 @@ import { sync as mkDirPSync } from 'mkdirp';
 import path from 'path';
 
 export default class Writer {
-  constructor(basePath, { onlyIndex = true }) {
+  constructor(basePath, onlyIndex = true) {
     this.basePath = basePath;
     this.onlyIndex = true;
   }
@@ -26,7 +26,9 @@ export default class Writer {
 
   writeHtml(fileName, content) {
     let fileNameWithEnding;
-    if (this.onlyIndex) {
+    if (!fileName) {
+      fileNameWithEnding = 'index.html';
+    } else if (this.onlyIndex) {
       fileNameWithEnding = `${fileName}/index.html`;
     } else {
       fileNameWithEnding = `${fileName}.html`;

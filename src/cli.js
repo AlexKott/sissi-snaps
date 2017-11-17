@@ -8,6 +8,7 @@ CLI
 import path from 'path';
 
 import Crawler from './Crawler';
+import Filter from './Filter';
 import gatherOptions from './options';
 import Server from './Server';
 import Writer from './Writer';
@@ -15,11 +16,13 @@ import Writer from './Writer';
 export default (async () => {
   const options = gatherOptions();
   const basePath = path.join(process.cwd(), options.buildDir);
-  const baseUrl = `http://localhost:${options.snaps.server.port}/`;
+  const baseUrl = `http://localhost:${options.snaps.port}/`;
 
-  const crawler = new Crawler(baseUrl, options.snaps.crawler);
-  const server = new Server(basePath, options.snaps.server);
-  const writer = new Writer(basePath, options.snaps.writer);
+  const crawler = new Crawler(baseUrl, options.snaps.snapshotDelay);
+  const filter = new Filter(options.snaps.stripReact);
+  const server = new Server(basePath, options.snaps.port);
+  const writer = new Writer(basePath, options.snaps.onlyIndex);
+
   writer.rename('index.html', '_tmp.html');
 
   try {
@@ -28,8 +31,9 @@ export default (async () => {
     console.log(error);
   }
 
-  crawler.crawl((dom) => {
-    console.log(dom.serialize());
+  await crawler.crawl((urlPath, dom) => {
+    const filteredDOM = filter.filterDOMtoString(dom);
+    writer.writeHtml(urlPath, filteredDOM);
     server.stop();
   });
 })();

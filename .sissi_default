@@ -1,14 +1,9 @@
 {
   "buildDir": "build",
   "snaps": {
-    "crawler": {
-      "snapshotDelay": 50
-    },
-    "server": {
-      "port": 3231
-    },
-    "writer": {
-      "onlyIndex": true
-    }
+    "port": 3231,
+    "snapshotDelay": 50,
+    "onlyIndex": true,
+    "stripReact": true
   }
 }

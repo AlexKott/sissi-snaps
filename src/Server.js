@@ -9,7 +9,7 @@ import express from 'express';
 import path from 'path';
 
 export default class Server {
-  constructor(basePath, { port = 3231 }) {
+  constructor(basePath, port = 3231) {
     const app = express();
 
     app.use(express.static(basePath));
