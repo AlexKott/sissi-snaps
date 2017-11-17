@@ -40,4 +40,8 @@ export default class Writer {
     mkDirPSync(dirName);
     fs.writeFileSync(filePath, content);
   }
+
+  remove(fileName) {
+    fs.unlinkSync(path.join(this.basePath, fileName));
+  }
 }

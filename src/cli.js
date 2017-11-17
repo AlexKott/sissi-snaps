@@ -1,10 +1,3 @@
-/*
-CLI
-  8. Take result html and path
-  9. Writer write to file
-  10. Stop Sever
-  11. remove _tmp.html
-*/
 import path from 'path';
 
 import Crawler from './Crawler';
@@ -34,6 +27,9 @@ export default (async () => {
   await crawler.crawl((urlPath, dom) => {
     const filteredDOM = filter.filterDOMtoString(dom);
     writer.writeHtml(urlPath, filteredDOM);
-    server.stop();
   });
+
+  writer.remove('_tmp.html');
+
+  server.stop();
 })();

@@ -1,11 +1,3 @@
-/*
-CRAWLER
-  5. Remove webpack script, remove react ids, empty react elements
-  6. Extract new _internal_ links, add them to paths-array
-
-  7. jsdom serialize document
-  8. send html and path information to provided callback
-*/
 import jsdom from 'jsdom';
 import url from 'url';
 
@@ -23,18 +15,15 @@ export default class Crawler {
   async crawl(callback) {
     this.callback = callback;
     console.log('Crawling...');
-    try {
-      await this.takeSnapshot(this.paths.shift());
-    } catch(error) {
-      console.log(error);
-    }
-    console.log('Finished crawling.');
+    return new Promise((resolve, reject) => {
+      this.takeSnapshot(this.paths.shift(), resolve, reject);
+    });
   }
 
-  async takeSnapshot(urlPath) {
+  async takeSnapshot(urlPath, resolve, reject) {
     if (urlPath === undefined) {
-      console.log('stopping');
-      return Promise.resolve();
+      console.log('Crawling finished.');
+      return resolve();
     }
 
     const pathName = url.resolve('', urlPath);
@@ -42,7 +31,7 @@ export default class Crawler {
     let dom;
 
     if (this.processedPaths[pathName]) {
-      return this.takeSnapshot(this.paths.shift());
+      return this.takeSnapshot(this.paths.shift(), resolve, reject);
     }
     this.processedPaths[pathName] = true;
 
@@ -53,17 +42,32 @@ export default class Crawler {
       });
     } catch(error) {
       console.log(error);
-    } finally {
-      setTimeout(() => {
-        this.callback(urlPath, dom);
-        this.extractLinks(dom);
-        this.takeSnapshot(this.paths.shift());
-      }, this.snapshotDelay);
     }
+
+    setTimeout(() => {
+      this.callback(urlPath, dom);
+      this.extractLinks(dom);
+      try {
+        this.takeSnapshot(this.paths.shift(), resolve, reject);
+      } catch(error) {
+        console.log(error);
+      }
+    }, this.snapshotDelay);
   }
 
   extractLinks(dom) {
-    const anchors = dom.window.document.querySelectorAll('a');
-    // TODO: filter anchors after data-link-type='internal'
+    const anchors = Array.from(dom.window.document.querySelectorAll('a'));
+    anchors.forEach(anchor => {
+      const href = anchor.getAttribute('href')
+      const pathName = href ? href.replace(/^\//, '') : '';
+      // TODO: use SissiLink ReactComponent to select internal links
+      if (pathName.match(/^https?:/)) {
+        return;
+      }
+
+      if (!this.processedPaths[pathName]) {
+        this.paths.push(pathName);
+      }
+    });
   }
 }

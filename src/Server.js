@@ -31,6 +31,7 @@ export default class Server {
   }
 
   stop() {
+    console.log('Server closing...');
     this.instance.close();
   }
 }
