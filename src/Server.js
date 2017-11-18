@@ -1,10 +1,3 @@
-/***
-  The server is opening all static files in the basePath (especially
-  important for the *.js files).
-  For all accessed routes it returns the temporary (webpack) html file, so
-  that the frontend router can take over.
-***/
-
 import express from 'express';
 import path from 'path';
 

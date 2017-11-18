@@ -1,10 +1,3 @@
-/***
-  rename: changes name of a file inside the basePath (if a file with that name
-  exists, it gets overwritten!)
-  writeHtml: Save a html string to a file with the given name inside the
-  basePath. If onlyIndex is true the file gets saved as index.html inside a new
-  directory.
-***/
 import fs from 'fs';
 import { sync as mkDirPSync } from 'mkdirp';
 import path from 'path';

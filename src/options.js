@@ -1,8 +1,3 @@
-/***
-  This looks for a .sissi file in the top directory. It overrides the settings
-  in .sissi_default.
-***/
-
 import fs from 'fs';
 import path from 'path';
 
