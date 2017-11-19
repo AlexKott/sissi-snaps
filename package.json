@@ -1,6 +1,6 @@
 {
   "name": "sissi-snaps",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Taking snapshots for sissi (simple static sites)",
   "author": "Alex Kott",
   "license": "ISC",
