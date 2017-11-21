@@ -1,6 +1,6 @@
 {
   "name": "sissi-snaps",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Taking snapshots for sissi (simple static sites)",
   "author": "Alex Kott",
   "license": "ISC",
@@ -22,11 +22,14 @@
   },
   "babel": {
     "presets": [
-      ["env", {
-        "targets": {
-          "node": "8"
+      [
+        "env",
+        {
+          "targets": {
+            "node": "8"
+          }
         }
-      }]
+      ]
     ]
   },
   "keywords": [
