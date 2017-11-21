@@ -4,6 +4,6 @@
     "port": 3231,
     "snapshotDelay": 300,
     "onlyIndex": true,
-    "stripReact": true
+    "removeTemplateScript": true
   }
 }

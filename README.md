@@ -8,7 +8,11 @@ Of course you can use _sissi-snaps_ independently as well if it fits your needs.
 ## Installation
 When you're asking for _sissi_, _sissi-snaps_ is already included. For every other use case just do the usual:
 
-`yarn add sissi-snaps` or `npm i sissi-snaps`
+`yarn add sissi-snaps`
+
+or
+
+`npm i sissi-snaps`
 
 ## Usage
 When you're working with _sissi_ there's not much to do. She is good at managing and will make sure that _sissi-snaps_ does its job. If you want to use this module independently you will have to make sure that all of the preconditions are set.
@@ -67,14 +71,14 @@ Default: `true`
 }
 ```
 
-### stripReact
+### removeTemplateScript
 Since you're generating static sites you probably don't want to deliver the JavaScript code that the templates were built on. However, you can choose to let [React](https://github.com/facebook/react) take over once the HTML files are loaded.
 
 Default: `true`
 ```
 {
   "snaps": {
-    "stripReact": false
+    "removeTemplateScript": false
   }
 }
 ```

@@ -27,6 +27,7 @@ export default class Crawler {
     }
 
     const pathName = url.resolve('', urlPath);
+
     const snapUrl = this.baseUrl + pathName;
     let dom;
 
@@ -56,16 +57,12 @@ export default class Crawler {
   }
 
   extractLinks(dom) {
-    const anchors = Array.from(dom.window.document.querySelectorAll('a'));
+    const anchors = Array.from(dom.window.document.querySelectorAll('a[data-type="sissi-internal"]'));
     anchors.forEach(anchor => {
       const href = anchor.getAttribute('href')
       const pathName = href ? href.replace(/^\//, '') : '';
-      // TODO: use SissiLink ReactComponent to select internal links
-      if (pathName.match(/^https?:/)) {
-        return;
-      }
 
-      if (!this.processedPaths[pathName]) {
+      if (pathName && !this.processedPaths[pathName]) {
         this.paths.push(pathName);
       }
     });

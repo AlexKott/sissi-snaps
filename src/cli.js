@@ -12,7 +12,7 @@ export default (async () => {
   const baseUrl = `http://localhost:${options.snaps.port}/`;
 
   const crawler = new Crawler(baseUrl, options.snaps.snapshotDelay);
-  const filter = new Filter(options.snaps.stripReact);
+  const filter = new Filter(options.snaps.removeTemplateScript);
   const server = new Server(basePath, options.snaps.port);
   const writer = new Writer(basePath, options.snaps.onlyIndex);
 
@@ -25,8 +25,11 @@ export default (async () => {
   }
 
   await crawler.crawl((urlPath, dom) => {
-    const filteredDOM = filter.filterDOMtoString(dom);
-    writer.writeHtml(urlPath, filteredDOM);
+    const serializedDOM = filter
+      .filterDOMtoString(dom)
+      .serialize();
+
+    writer.writeHtml(urlPath, serializedDOM);
   });
 
   writer.remove('_tmp.html');
