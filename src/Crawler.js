@@ -60,7 +60,14 @@ export default class Crawler {
     const anchors = Array.from(dom.window.document.querySelectorAll('a[data-type="sissi-internal"]'));
     anchors.forEach(anchor => {
       const href = anchor.getAttribute('href')
-      const pathName = href ? href.replace(/^\//, '') : '';
+      let pathName = href ? href.replace(/^\//, '') : '';
+      const queryIndex = pathName.indexOf('?');
+      const hashIndex = pathName.indexOf('#');
+      const splitIndex = queryIndex !== -1 ? queryIndex : hashIndex;
+
+      if (splitIndex !== -1) {
+        pathName = pathName.substring(0, splitIndex);
+      }
 
       if (pathName && !this.processedPaths[pathName]) {
         this.paths.push(pathName);
