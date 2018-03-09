@@ -7,7 +7,9 @@ export default class Filter {
     if (this.removeTemplateScript) {
       // TODO: remove only template script
       const templateScript = dom.window.document.querySelector('script');
-      templateScript.remove();
+      if (templateScript) {
+        templateScript.remove();
+      }
     }
     return dom;
   }
