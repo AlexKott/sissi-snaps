@@ -6,7 +6,7 @@ import gatherOptions from './options';
 import Server from './Server';
 import Writer from './Writer';
 
-export default (async () => {
+export default async () => {
   const options = gatherOptions();
   const basePath = path.join(process.cwd(), options.buildDir);
   const baseUrl = `http://localhost:${options.snaps.port}/`;
@@ -35,4 +35,4 @@ export default (async () => {
   writer.remove('_tmp.html');
 
   server.stop();
-})();
+};
