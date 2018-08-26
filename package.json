@@ -1,7 +1,7 @@
 {
   "name": "sissi-snaps",
   "description": "Taking snapshots for sissi (simple static sites)",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "license": "GPL-3.0-or-later",
   "repository": "square-a/sissi-snaps",
   "author": "A Square",
@@ -14,27 +14,31 @@
     "react",
     "static-site-generator"
   ],
+  "main": "lib/index.js",
   "bin": {
     "sissi-snaps": "./bin/run"
   },
   "bugs": "https://github.com/square-a/sissi-snaps/issues",
   "dependencies": {
+    "@babel/polyfill": "^7.0.0-rc.2",
     "express": "^4.16.3",
     "jsdom": "^11.11.0",
+    "minimist": "^1.2.0",
     "mkdirp": "^0.5.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.7.0"
+    "babel-preset-es2015-node5": "^1.2.0"
   },
   "babel": {
     "presets": [
-      "env"
+      "babel-preset-es2015-node5"
     ]
   },
   "scripts": {
     "clear": "rm -rf ./lib && mkdir ./lib",
     "prepare": "npm run clear && npm run transpile",
+    "start": "npm run clear && npm run watch",
     "transpile": "./node_modules/.bin/babel src -d lib",
     "watch": "./node_modules/.bin/babel src -d lib --watch"
   }

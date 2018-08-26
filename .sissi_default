@@ -1,9 +1,0 @@
-{
-  "buildDir": "build",
-  "snaps": {
-    "port": 3231,
-    "snapshotDelay": 300,
-    "onlyIndex": true,
-    "removeTemplateScript": true
-  }
-}

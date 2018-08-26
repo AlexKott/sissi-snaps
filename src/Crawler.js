@@ -14,7 +14,6 @@ export default class Crawler {
 
   async crawl(callback) {
     this.callback = callback;
-    console.log('Crawling...');
     return new Promise((resolve, reject) => {
       this.takeSnapshot(this.paths.shift(), resolve, reject);
     });
@@ -22,7 +21,6 @@ export default class Crawler {
 
   async takeSnapshot(urlPath, resolve, reject) {
     if (urlPath === undefined) {
-      console.log('Crawling finished.');
       return resolve();
     }
 

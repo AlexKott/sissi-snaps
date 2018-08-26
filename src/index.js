@@ -1,22 +1,22 @@
 import path from 'path';
 
 import Crawler from './Crawler';
-import Filter from './Filter';
-import gatherOptions from './options';
+import filterDomtoString from './filterDomtoString';
 import Server from './Server';
-import Writer from './Writer';
+import writeHtml from './writeHtml';
 
-export default async () => {
-  const options = gatherOptions();
-  const basePath = path.join(process.cwd(), options.buildDir);
-  const baseUrl = `http://localhost:${options.snaps.port}/`;
+module.exports = async function run(args, flags) {
+  const {
+    buildDir = 'build',
+    port = '3020',
+    snapshotDelay = 300,
+  } = flags;
 
-  const crawler = new Crawler(baseUrl, options.snaps.snapshotDelay);
-  const filter = new Filter(options.snaps.removeTemplateScript);
-  const server = new Server(basePath, options.snaps.port);
-  const writer = new Writer(basePath, options.snaps.onlyIndex);
+  const outPath = path.join(process.cwd(), buildDir);
+  const baseUrl = `http://localhost:${port}/`;
 
-  writer.rename('index.html', '_tmp.html');
+  const crawler = new Crawler(baseUrl, snapshotDelay);
+  const server = new Server(outPath, port);
 
   try {
     await server.start();
@@ -25,14 +25,9 @@ export default async () => {
   }
 
   await crawler.crawl((urlPath, dom) => {
-    const serializedDOM = filter
-      .filterDOMtoString(dom)
-      .serialize();
-
-    writer.writeHtml(urlPath, serializedDOM);
+    const serializedDOM = filterDomtoString(dom);
+    writeHtml(urlPath, serializedDOM, outPath);
   });
-
-  writer.remove('_tmp.html');
 
   server.stop();
 };
