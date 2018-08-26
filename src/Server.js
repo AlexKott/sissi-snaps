@@ -7,7 +7,7 @@ export default class Server {
     const basePath = process.cwd();
 
     app.use(express.static(outPath));
-    app.get('/sissi/__content__', (req, res) => res.status(200).sendFile(path.join(basePath, 'content.json')));
+    app.get('/sissi/__content__', (req, res) => res.sendFile(path.join(basePath, 'content.json')));
     app.get('*', (req, res) => res.sendFile(path.join(outPath, '_tmp.html')));
 
     this.port = port;
