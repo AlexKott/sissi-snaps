@@ -1,75 +1,56 @@
-import jsdom from 'jsdom';
-import url from 'url';
+import { renderStatic } from 'sissi-guides';
 
-const { JSDOM } = jsdom;
+import * as c from './constants';
 
 export default class Crawler {
-  constructor(baseUrl, snapshotDelay = 0) {
-    this.baseUrl = baseUrl;
-    this.paths = [];
-    this.paths.push('');
-    this.processedPaths = {};
-    this.snapshotDelay = snapshotDelay;
+  constructor(Page, content) {
+    this.Page = Page;
+    this.content = content;
+    this.paths = [''];
+    this.staticPages = {};
+  }
+
+  getStaticPages() {
+    return this.staticPages;
   }
 
   async crawl(callback) {
     this.callback = callback;
-    return new Promise((resolve, reject) => {
-      this.takeSnapshot(this.paths.shift(), resolve, reject);
+    return new Promise(resolve => {
+      this.takeSnapshot(this.paths.shift(), resolve);
     });
   }
 
-  async takeSnapshot(urlPath, resolve, reject) {
-    if (urlPath === undefined) {
+  async takeSnapshot(pathName, resolve) {
+    if (pathName === undefined) {
       return resolve();
     }
 
-    const pathName = url.resolve('', urlPath);
-
-    const snapUrl = this.baseUrl + pathName;
-    let dom;
-
-    if (this.processedPaths[pathName]) {
-      return this.takeSnapshot(this.paths.shift(), resolve, reject);
-    }
-    this.processedPaths[pathName] = true;
-
-    try {
-      dom = await JSDOM.fromURL(snapUrl, {
-        resources: 'usable',
-        runScripts: 'dangerously',
-      });
-    } catch(error) {
-      console.log(error);
+    if (this.staticPages[pathName]) {
+      return this.takeSnapshot(this.paths.shift(), resolve);
     }
 
-    setTimeout(() => {
-      this.callback(urlPath, dom);
-      this.extractLinks(dom);
-      try {
-        this.takeSnapshot(this.paths.shift(), resolve, reject);
-      } catch(error) {
-        console.log(error);
-      }
-    }, this.snapshotDelay);
+    const staticPage = renderStatic(this.Page, this.content, pathName);
+    this.staticPages[pathName] = staticPage;
+
+    this.extractLinks(staticPage);
+
+    this.takeSnapshot(this.paths.shift(), resolve);
   }
 
-  extractLinks(dom) {
-    const anchors = Array.from(dom.window.document.querySelectorAll('a[data-type="sissi-internal"]'));
-    anchors.forEach(anchor => {
-      const href = anchor.getAttribute('href')
-      let pathName = href ? href.replace(/^\//, '') : '';
-      const queryIndex = pathName.indexOf('?');
-      const hashIndex = pathName.indexOf('#');
-      const splitIndex = queryIndex !== -1 ? queryIndex : hashIndex;
+  extractLinks(staticPage) {
+    let anchorElem = c.SISSI_LINK.exec(staticPage);
 
-      if (splitIndex !== -1) {
-        pathName = pathName.substring(0, splitIndex);
+    while (anchorElem) {
+      const hrefMatch = c.LINK_HREF.exec(anchorElem[0]) || [];
+      const href = hrefMatch[2] || '';
+      const target = c.TARGET_FILTER.exec(href)[1];
+
+      if (!this.staticPages[target]) {
+        this.paths.push(target);
       }
 
-      if (pathName && !this.processedPaths[pathName]) {
-        this.paths.push(pathName);
-      }
-    });
+      anchorElem = c.SISSI_LINK.exec(staticPage);
+    }
   }
 }

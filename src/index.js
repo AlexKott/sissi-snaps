@@ -1,33 +1,30 @@
 import path from 'path';
+import React from 'react';
 
 import Crawler from './Crawler';
-import filterDomtoString from './filterDomtoString';
-import Server from './Server';
-import writeHtml from './writeHtml';
 
 module.exports = async function run(args, flags) {
   const {
     buildDir = 'build',
-    port = '3020',
-    snapshotDelay = 300,
+    tmpDir = 'tmp',
   } = flags;
 
   const outPath = path.join(process.cwd(), buildDir);
-  const baseUrl = `http://localhost:${port}/`;
+  const tmpPath = path.join(process.cwd(), tmpDir);
 
-  const crawler = new Crawler(baseUrl, snapshotDelay);
-  const server = new Server(outPath, port);
+  const Page = require(path.join(tmpPath, 'sissi-script')).default;
+  const content = require(path.join(process.cwd(), 'content.json'));
 
-  try {
-    await server.start();
-  } catch(error) {
-    console.log(error);
-  }
+  const crawler = new Crawler(Page, content);
 
-  await crawler.crawl((urlPath, dom) => {
-    const serializedDOM = filterDomtoString(dom);
-    writeHtml(urlPath, serializedDOM, outPath);
-  });
+  await crawler.crawl();
 
-  server.stop();
+  const staticPages = crawler.getStaticPages();
+  console.log(staticPages);
+
+  // TODO
+  // load html
+  // remove sissi-script.js from html
+  // insert static page for each route
+  // save to build dir
 };
