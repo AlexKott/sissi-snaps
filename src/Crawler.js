@@ -3,37 +3,32 @@ import { renderStatic } from 'sissi-guides';
 import * as c from './constants';
 
 export default class Crawler {
-  constructor(Page, content) {
+  constructor(Page, content, template) {
     this.Page = Page;
     this.content = content;
+    this.template = template;
+
     this.paths = [''];
     this.staticPages = {};
   }
 
-  getStaticPages() {
-    return this.staticPages;
-  }
-
-  async crawl(callback) {
-    this.callback = callback;
+  async crawl() {
     return new Promise(resolve => {
       this.takeSnapshot(this.paths.shift(), resolve);
     });
   }
 
-  async takeSnapshot(pathName, resolve) {
+  takeSnapshot(pathName, resolve) {
     if (pathName === undefined) {
-      return resolve();
+      return resolve(this.staticPages);
     }
 
-    if (this.staticPages[pathName]) {
-      return this.takeSnapshot(this.paths.shift(), resolve);
+    if (!this.staticPages[pathName]) {
+      const staticPage = renderStatic(this.Page, this.content, pathName);
+      this.staticPages[pathName] = this.insertContent(staticPage);
+
+      this.extractLinks(staticPage);
     }
-
-    const staticPage = renderStatic(this.Page, this.content, pathName);
-    this.staticPages[pathName] = staticPage;
-
-    this.extractLinks(staticPage);
 
     this.takeSnapshot(this.paths.shift(), resolve);
   }
@@ -52,5 +47,9 @@ export default class Crawler {
 
       anchorElem = c.SISSI_LINK.exec(staticPage);
     }
+  }
+
+  insertContent(staticPage) {
+    return this.template.replace(c.SISSI_CONTAINER, `$1${staticPage}$4`);
   }
 }

@@ -1,7 +1,10 @@
+import fs from 'fs';
 import path from 'path';
 import React from 'react';
 
 import Crawler from './Crawler';
+import writeToFiles from './writeToFiles';
+import { SISSI_SCRIPT } from './constants';
 
 module.exports = async function run(args, flags) {
   const {
@@ -11,20 +14,18 @@ module.exports = async function run(args, flags) {
 
   const outPath = path.join(process.cwd(), buildDir);
   const tmpPath = path.join(process.cwd(), tmpDir);
+  const scriptPath = path.join(tmpPath, 'sissi-script');
+  const indexHtmlPath = path.join(tmpPath, 'index.html');
+  const contentJsonPath = path.join(process.cwd(), 'content.json');
 
-  const Page = require(path.join(tmpPath, 'sissi-script')).default;
-  const content = require(path.join(process.cwd(), 'content.json'));
+  const Page = require(scriptPath).default;
+  const indexHtml = fs.readFileSync(indexHtmlPath, 'utf-8');
+  const content = require(contentJsonPath);
 
-  const crawler = new Crawler(Page, content);
+  const template = indexHtml.replace(SISSI_SCRIPT, '');
 
-  await crawler.crawl();
+  const crawler = new Crawler(Page, content, template);
+  const staticPages = await crawler.crawl();
 
-  const staticPages = crawler.getStaticPages();
-  console.log(staticPages);
-
-  // TODO
-  // load html
-  // remove sissi-script.js from html
-  // insert static page for each route
-  // save to build dir
+  await writeToFiles(staticPages, outPath);
 };
