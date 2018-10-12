@@ -1,93 +1,22 @@
-# sissi-snaps
+# sissi-snaps – taking snapshots for [sissi]
 
-## Introduction
-_Sissi-snaps_ is part of [sissi](https://github.com/AlexKott/sissi), a simple static site generator. Because _sissi_ doesn't like to do everything on herself, she employs some modules who can help. _Sissi_ is still young and the modules might change from time to time to adjust to her different life situations.
+<img src='https://raw.githubusercontent.com/square-a/sissi/master/sissi.png'  width='160px' />
 
-Of course you can use _sissi-snaps_ independently as well if it fits your needs. Just consider that the main goal for the module is, to make _sissi_ happy. Everything else is just an extra.
+Hi, it’s me again. *sissi*, your ***si**mple **s**tatic **si**tes* generator.
 
-## Installation
-When you're asking for _sissi_, _sissi-snaps_ is already included. For every other use case just do the usual:
+If you want to turn your simple React app into a static site with a built-in CMS look no further! Or actually, do: [the sissi repo][sissi] is where you'll find all you need. See you there!
 
-`yarn add sissi-snaps`
+If you're a sissi fan and want to contribute – welcome! I'm glad you're here. I have to apologise, though. Please bear with me. I have but two parents and they are working hard on their sissi-to-do-lists. *Contribution guidelines* and *thorough documentation of all packages* are somewhere in there. Somewhere... For now, this will have to do:
 
-or
+## What sissi-snaps can do
+*sissi-snaps* creates static HTML files from React components.
 
-`npm i sissi-snaps`
+It starts by crawling the index page of the [sissi] project and looks for links with the `data-type="sissi-internal"` attribute to figure out which routes to snapshot. These attributes are set by [sissi-guides].
 
-## Usage
-When you're working with _sissi_ there's not much to do. She is good at managing and will make sure that _sissi-snaps_ does its job. If you want to use this module independently you will have to make sure that all of the preconditions are set.
+For each page *sissi-snaps* passes the *EntryComponent* (defined in the [sissi] project and exposed by [sissi-packs] in the `tmp` folder) and the `content.json` to [sissi-guides]' `renderStatic()` method which returns a static HTML page. *sissi-snaps* then creates a new folder for the route inside the `build` directory and saves the snapshot as `index.html`.
 
-As with other command line tools you have to use the _bin_. You'll do that by entering `sissi-snaps` or `node_modules/.bin/sissi-snaps` (yes, it's that simple). The tool will start looking for an _index.html_ inside your _build directory_. The file get's opened in [jsdom](https://github.com/tmpvar/jsdom) and after a _timeout_ (during which the JavaScript can be executed) a snapshot will be saved. The original _index.html_ will be overwritten.
+And voilà – that's your static website in the `build` directory right there!
 
-All internal links will be opened and stored as own _.html files_. By default these links will be stored as _path/index.html_, but you can change that setting if you like.
-
-## Configuration
-You can change all settings by making a _.sissi_ file in your directory.
-
-### buildDir
-Where your _index.html_ is found and all other files will be saved at.
-
-Default: `build`.
-```
-{
-  "buildDir": "myOwnBuildDir"
-}
-```
-(Note that this setting must be specified at top level, because it will be used by other _sissi_-servants as well.)
-
-### port
-An [express](https://github.com/expressjs/express) server is used to deliver the files to _jsdom_. You can specify the port it will use.
-
-Default: `3231`
-```
-{
-  "snaps": {
-    "port": 8000
-  }
-}
-```
-
-### snapshotDelay
-_Jsdom_ will need some time to process the JavaScript in your HTML files. Sometimes it will throw an error because some elements couldn't be found. You can try increasing the _snapshotDelay_ to fix this.
-
-Default: `300`
-```
-{
-  "snaps": {
-    "snapshotDelay": 500
-  }
-}
-```
-
-### onlyIndex
-This will change whether you receive your files as _filename/index.html_ or _filename.html_.
-
-Default: `true`
-```
-{
-  "snaps": {
-    "onlyIndex": false
-  }
-}
-```
-
-### removeTemplateScript
-Since you're generating static sites you probably don't want to deliver the JavaScript code that the templates were built on. However, you can choose to let [React](https://github.com/facebook/react) take over once the HTML files are loaded.
-
-Default: `true`
-```
-{
-  "snaps": {
-    "removeTemplateScript": false
-  }
-}
-```
-
-## Contributing
-This is just one of several things that _sissi_ needs for her well being. It is important to keep all settings focussed on her so that she'll always be the center.
-
-Feel free to open an issue or [get in touch](https://alexkott.com), if you're interested in helping _sissi_ through her childhood or see some parenting mistake that you'd like to fix.
-
-
-## Credits
-_Sissi-snaps_ was heavily inspired by [react-snapshots](https://github.com/geelen/react-snapshot/).
+[sissi]:https://github.com/square-a/sissi
+[sissi-guides]:https://github.com/square-a/sissi-guides
+[sissi-packs]:https://github.com/square-a/sissi-packs
